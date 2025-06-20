@@ -76,7 +76,7 @@ function sendResult(){
   const bmr  = parseInt(result.match(/BMR<\/b>: (\d+)/)?.[1]||0,10);
   const tdee = parseInt(result.match(/TDEE<\/b>: (\d+)/)?.[1]||0,10);
 
-  fetch('http://localhost:3000/api/send-email',{
+  fetch('/api/send-email',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({ email, bmr, tdee })
