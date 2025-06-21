@@ -1,16 +1,49 @@
-const express = require('express'); //gọi thư viện express - framework Tạo web server
-const path = require('path'); //gọi thư viện path để chạy trên mọi hệ điều hành được windows, macos, linux
-const app = express(); //khởi tạo 1 uwsng dụng express
-const port = process.env.PORT || 3000; //cổng mà server lắng nghe để mở trình duyệt
+require('dotenv').config();
+const express = require('express');
+const path = require('path');
+const nodemailer = require('nodemailer');
 
-// Dùng thư mục hiện tại làm nơi phục vụ file tĩnh html , css, js, ảnh
+const app = express();
+const port = process.env.PORT || 3000;
+
+// Middleware
+app.use(express.json());
 app.use(express.static(__dirname));
 
-// Trả về index.html khi truy cập /
+// Trang index
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.listen(port, () => { //khỏi động server và lắng nghe tại localhost:3000. Khi chạy thành công sẽ log ra dòng server läùt auf Terminal
+// Gửi email
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASS,
+  }
+});
+
+app.post('/api/send-email', (req, res) => {
+  const { email, bmr, tdee } = req.body;
+
+  const mailOptions = {
+    from: process.env.GMAIL_USER,
+    to: email,
+    subject: 'Dein BMR und TDEE Ergebnis',
+    html: `<p><b>BMR:</b> ${bmr} kcal<br><b>TDEE:</b> ${tdee} kcal</p>`
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Lỗi khi gửi mail:', error);
+      return res.status(500).json({ success: false });
+    }
+    res.json({ success: true });
+  });
+});
+
+// Lắng nghe server
+app.listen(port, () => {
   console.log(`🚀 Server läuft auf http://localhost:${port}`);
 });
