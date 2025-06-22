@@ -65,7 +65,7 @@ function sendResult(){
   const bmr  = parseInt(result.match(/BMR<\/b>: (\d+)/)?.[1]||0,10);
   const tdee = parseInt(result.match(/TDEE<\/b>: (\d+)/)?.[1]||0,10);
 
-  fetch('/api/send-email', {
+  fetch('https://kalorienrechnen.onrender.com/api/send-email', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, bmr, tdee })
