@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
@@ -66,7 +66,7 @@
   <div id="log"></div>
   <div id="total">Gesamtkalorien: 0</div>
 
-  <!-- GỢI Ý -->
+  <!-- Tipps -->
   <div class="tip-box">
     <h3>🥣 Frühstück</h3>
     <ul>
@@ -74,14 +74,12 @@
       <li>Vollkornbrot + gekochtes Ei (~250 kcal)</li>
       <li>Grüner Smoothie (Spinat + Apfel) (~180 kcal)</li>
     </ul>
-
     <h3>🍛 Mittagessen</h3>
     <ul>
       <li>Quinoa + gebratenes Gemüse (~450 kcal)</li>
       <li>Hähnchenbrust + Süßkartoffel + Brokkoli (~500 kcal)</li>
       <li>Linsensuppe + Salat (~400 kcal)</li>
     </ul>
-
     <h3>🍲 Abendessen</h3>
     <ul>
       <li>Gemüse-Omelett + Tomatensalat (~350 kcal)</li>
@@ -91,46 +89,49 @@
   </div>
 
   <div class="tip-box">
-    <h3>Frühstück von Vietnam 🇻🇳</h3>
+    <h3>🇻🇳 Frühstück aus Vietnam</h3>
     <ul>
-      <li>Reisnudeln + Hähnchenbrust ohne Haut + frische Kräuter (~320 kcal)</li>
+      <li>Reisnudeln + Hähnchenbrust ohne Haut + Kräuter (~320 kcal)</li>
       <li>1/2 Banh Mi + Spiegelei (~350 kcal)</li>
-      <li>80g gekochtes Klebreis mit Mais (~300 kcal)</li>
+      <li>80g Klebreis mit Mais (~300 kcal)</li>
     </ul>
-
-    <h3>🍛 Mittagessen von Vietnam 🇻🇳</h3>
+    <h3>🍛 Mittagessen aus Vietnam</h3>
     <ul>
-      <li>Vollkornreis + gedünsteter Fisch + gekochter Wasserspinat (~430 kcal)</li>
+      <li>Vollkornreis + gedünsteter Fisch + Wasserspinat (~430 kcal)</li>
       <li>Hähnchenbrust + Süßkartoffel + Brokkoli (~500 kcal)</li>
       <li>Diät-Version von Bun Bo Hue (~450 kcal)</li>
     </ul>
-
-    <h3>🍲 Abendessen von Vietnam 🇻🇳</h3>
+    <h3>🍲 Abendessen aus Vietnam</h3>
     <ul>
-      <li>Kürbis-Garnelen-Suppe + kleine Babybanane (~350 kcal)</li>
-      <li>Tofu in Tomatensauce + Reis (~400 kcal)</li>
-      <li>5 Sommerrollen (mit Salat + Garnelen) (~450 kcal)</li>
+      <li>Kürbis-Garnelen-Suppe + Babybanane (~350 kcal)</li>
+      <li>Tofu in Tomatensoße + Reis (~400 kcal)</li>
+      <li>5 Sommerrollen (mit Garnelen) (~450 kcal)</li>
     </ul>
   </div>
-<h2>TDEE/BMR Rechner</h2>
-<div class="flex">
-  <input type="number" id="age" placeholder="Alter (Jahre)" />
-  <input type="number" id="height" placeholder="Größe (cm)" />
-  <input type="number" id="weight" placeholder="Gewicht (kg)" />
-  <select id="gender">
-    <option value="female">Weiblich</option>
-    <option value="male">Männlich</option>
-  </select>
-  <select id="activity">
-    <option value="1.2">Wenig Bewegung</option>
-    <option value="1.375">Leichte Bewegung</option>
-    <option value="1.55">Moderate Bewegung</option>
-    <option value="1.725">Viel Bewegung</option>
-    <option value="1.9">Sehr viel Bewegung</option>
-  </select>
-  <button onclick="calcTDEE()">Berechnen</button>
-</div>
-<div id="bmrResult" style="margin-top: 10px; font-weight: bold;"></div>
+
+  <h2>TDEE/BMR Rechner</h2>
+  <div class="flex">
+    <input type="number" id="age" placeholder="Alter (Jahre)" />
+    <input type="number" id="height" placeholder="Größe (cm)" />
+    <input type="number" id="weight" placeholder="Gewicht (kg)" />
+    <select id="gender">
+      <option value="female">Weiblich</option>
+      <option value="male">Männlich</option>
+    </select>
+    <select id="activity">
+      <option value="1.2">Wenig Bewegung</option>
+      <option value="1.375">Leichte Bewegung</option>
+      <option value="1.55">Moderate Bewegung</option>
+      <option value="1.725">Viel Bewegung</option>
+      <option value="1.9">Sehr viel Bewegung</option>
+    </select>
+    <button onclick="calcTDEE()">Berechnen</button>
+  </div>
+  <div id="bmrResult" style="margin-top: 10px; font-weight: bold;"></div>
+
+  <input type="email" id="email" placeholder="Deine Email-Adresse" style="flex: 2; margin-top: 12px;" />
+  <button onclick="sendResult()">Ergebnis senden</button>
+
   <script>
     function $(id) {
       return document.getElementById(id);
@@ -148,23 +149,17 @@
         return;
       }
 
-      // Gửi đến Node.js backend
       fetch('/api/hinzufuegen', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ essen: food, kalorien: cal })
-      })
-      .then(res => res.json())
-      .then(data => {
-        console.log('✅ Server-Antwort:', data);
-      })
-      .catch(err => console.error('❌ Fehler beim Senden:', err));
+      }).then(res => res.json())
+        .then(data => console.log('✅ Server-Antwort:', data))
+        .catch(err => console.error('❌ Fehler beim Senden:', err));
 
-      // Local render
       entries.push({ food, cal });
       localStorage.setItem('kalorienLog', JSON.stringify(entries));
       total += cal;
-
       $('food').value = '';
       $('cal').value = '';
       render();
@@ -184,70 +179,58 @@
       localStorage.removeItem('kalorienLog');
       render();
     }
-  </script>
-  <script>
-function calcTDEE(){
-  const age    = parseInt(document.getElementById('age').value, 10);
-  const height = parseInt(document.getElementById('height').value, 10);
-  const weight = parseFloat(document.getElementById('weight').value);
-  const gender = document.getElementById('gender').value;
-  const activity = parseFloat(document.getElementById('activity').value);
 
-  if(isNaN(age) || isNaN(height) || isNaN(weight)){
-    alert('Bitte Alter, Größe und Gewicht eingeben!');
-    return;
-  }
+    function calcTDEE(){
+      const age = parseInt($('age').value, 10);
+      const height = parseInt($('height').value, 10);
+      const weight = parseFloat($('weight').value);
+      const gender = $('gender').value;
+      const activity = parseFloat($('activity').value);
 
-  let bmr;
-  if(gender === 'male'){
-    bmr = 88.362 + 13.397 * weight + 4.799 * height - 5.677 * age;
-  }else{
-    bmr = 447.593 + 9.247 * weight + 3.098 * height - 4.330 * age;
-  }
+      if(isNaN(age) || isNaN(height) || isNaN(weight)){
+        alert('Bitte Alter, Größe und Gewicht eingeben!');
+        return;
+      }
 
-  const tdee = Math.round(bmr * activity);
-  document.getElementById('bmrResult').innerHTML =
-    `💡 <b>BMR</b>: ${Math.round(bmr)} kcal<br>🔥 <b>TDEE</b>: ${tdee} kcal`;
-}
-</script>
-<input type="email" id="email" placeholder="Deine Email-Adresse" style="flex: 2" />
-<button onclick="sendResult()">Ergebnis senden</button>
-<script>
-function sendResult() {
-  const email = document.getElementById('email').value.trim();
-  const bmrHtml = document.getElementById('bmrResult').innerHTML;
+      let bmr;
+      if(gender === 'male'){
+        bmr = 88.362 + 13.397 * weight + 4.799 * height - 5.677 * age;
+      }else{
+        bmr = 447.593 + 9.247 * weight + 3.098 * height - 4.330 * age;
+      }
 
-  if (!email || !bmrHtml) {
-    alert('Bitte Email eingeben und BMR/TDEE zuerst berechnen!');
-    return;
-  }
-
-  // Tách số từ HTML
-  const bmr = parseInt(bmrHtml.match(/BMR<\/b>: (\d+)/)?.[1] || 0, 10);
-  const tdee = parseInt(bmrHtml.match(/TDEE<\/b>: (\d+)/)?.[1] || 0, 10);
-
-  fetch('http://localhost:3000/api/send-email', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, bmr, tdee })
-
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      alert('✅ Email wurde erfolgreich gesendet!');
-    } else {
-      alert('❌ Fehler beim Senden');
+      const tdee = Math.round(bmr * activity);
+      $('bmrResult').innerHTML =
+        `💡 <b>BMR</b>: ${Math.round(bmr)} kcal<br>🔥 <b>TDEE</b>: ${tdee} kcal`;
     }
-  })
-  .catch(err => {
-    console.error(err);
-    alert('❌ Verbindungsfehler');
-  });
-}
-</script>
+
+    function sendResult() {
+      const email = $('email').value.trim();
+      const result = $('bmrResult').innerHTML;
+
+      if (!email || !result) {
+        alert('Bitte Email eingeben und BMR/TDEE zuerst berechnen!');
+        return;
+      }
+
+      const bmr  = parseInt(result.match(/BMR<\/b>: (\d+)/)?.[1] || 0, 10);
+      const tdee = parseInt(result.match(/TDEE<\/b>: (\d+)/)?.[1] || 0, 10);
+
+      const apiUrl ='/api/send-email';
+
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, bmr, tdee })
+      })
+      .then(r => r.json())
+      .then(d => {
+        alert(d.success
+          ? '✅ Email wurde erfolgreich gesendet!'
+          : '❌ Fehler beim Senden');
+      })
+      .catch(() => alert('❌ Verbindungsfehler'));
+    }
+  </script>
 </body>
 </html>
-
-
-
