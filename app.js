@@ -1,12 +1,9 @@
-/* --- helpers chung --- */
 function $(id){ return document.getElementById(id); }
 
-/* --- biến lưu thực phẩm --- */
 let entries = JSON.parse(localStorage.getItem('kalorienLog') || '[]');
 let total   = entries.reduce((s,e)=>s+e.cal,0);
 render();
 
-/* -------- Thêm thực phẩm -------- */
 function addEntry(){
   const food = $('food').value.trim();
   const cal  = parseInt($('cal').value,10);
@@ -15,26 +12,20 @@ function addEntry(){
     return;
   }
 
-  fetch('/api/hinzufuegen',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({essen:food, kalorien:cal})
-  });
-
-  entries.push({food,cal});
-  localStorage.setItem('kalorienLog',JSON.stringify(entries));
+  entries.push({food, cal});
+  localStorage.setItem('kalorienLog', JSON.stringify(entries));
   total += cal;
   $('food').value=''; $('cal').value='';
   render();
 }
 
-/* -------- render & reset -------- */
 function render(){
   $('log').innerHTML = entries.map(e =>
     `<div class="item">🍽 ${e.food} – ${e.cal} kcal</div>`
   ).join('');
-  $('total').textContent = 'Gesamtkalorien: '+total;
+  $('total').textContent = 'Gesamtkalorien: ' + total;
 }
+
 function resetAll(){
   if(!confirm('Alle Einträge löschen?')) return;
   entries=[]; total=0;
@@ -42,12 +33,11 @@ function resetAll(){
   render();
 }
 
-/* -------- tính BMR & TDEE -------- */
 function calcTDEE(){
-  const age      = parseInt($('age').value,10);
-  const height   = parseInt($('height').value,10);
-  const weight   = parseFloat($('weight').value);
-  const gender   = $('gender').value;
+  const age = parseInt($('age').value,10);
+  const height = parseInt($('height').value,10);
+  const weight = parseFloat($('weight').value);
+  const gender = $('gender').value;
   const activity = parseFloat($('activity').value);
 
   if(isNaN(age)||isNaN(height)||isNaN(weight)){
@@ -63,7 +53,6 @@ function calcTDEE(){
       `💡 <b>BMR</b>: ${Math.round(bmr)} kcal<br>🔥 <b>TDEE</b>: ${tdee} kcal`;
 }
 
-/* -------- gửi mail -------- */
 function sendResult(){
   const email   = $('email').value.trim();
   const result  = $('bmrResult').innerHTML;
@@ -76,17 +65,15 @@ function sendResult(){
   const bmr  = parseInt(result.match(/BMR<\/b>: (\d+)/)?.[1]||0,10);
   const tdee = parseInt(result.match(/TDEE<\/b>: (\d+)/)?.[1]||0,10);
 
-  fetch('/api/send-email', { //https://kalorienrechnen.onrender.com
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({ email, bmr, tdee })
-})
-  .then(r=>r.json())
-  .then(d=>{
-      alert(d.success ? 'Email wurde erfolgreich gesendet ✅'
-                      : 'Fehler beim Senden ❌');
+  fetch('/api/send-email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, bmr, tdee })
   })
-  .catch(()=> alert('Verbindungsfehler ❌'));
+  .then(r => r.json())
+  .then(d => {
+    alert(d.success ? '✅ Email wurde erfolgreich gesendet'
+                    : '❌ Fehler beim Senden');
+  })
+  .catch(() => alert('❌ Verbindungsfehler'));
 }
